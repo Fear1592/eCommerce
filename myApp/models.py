@@ -91,12 +91,10 @@ class Icon(models.Model):
 
 class Item(models.Model):
     name = models.CharField(max_length=155, verbose_name='Название товара')
-    choice = models.ForeignKey(Choices, blank=True, null=True,
-                               verbose_name='Название подкатегории',
-                               on_delete=models.CASCADE)
-    all_icon = models.ForeignKey(Icon, blank=True, null=True,
-                                 verbose_name='Все изображения товара',
-                                 on_delete=models.CASCADE)
+    choice = models.ManyToManyField(Choices, blank=True, null=True,
+                                    verbose_name='Название подкатегории')
+    all_icon = models.ManyToManyField(Icon, blank=True, null=True,
+                                      verbose_name='Все изображения товара')
     info_item = models.ForeignKey(ItemInfo,
                                   verbose_name='Основная информация о товаре',
                                   on_delete=models.CASCADE)
@@ -131,14 +129,12 @@ class Profile(models.Model):
                             verbose_name='Профиль в инсте')
     telegram = models.CharField(max_length=50, null=True, blank=True,
                                 verbose_name='Ссылка телеграм')
-    favourites = models.ForeignKey(Item, verbose_name='Избранное',
-                                   on_delete=models.CASCADE,
+    favourites = models.ManyToManyField(Item, verbose_name='Избранное',
+                                        blank=True,
+                                        null=True)
+    order = models.ManyToManyField(Order, verbose_name='Заказ',
                                    blank=True,
-                                   null=True)
-    order = models.ForeignKey(Order, verbose_name='Заказ',
-                              on_delete=models.CASCADE,
-                              blank=True,
-                              null=True, )
+                                   null=True, )
 
     class Meta:
         ordering = ['id']
