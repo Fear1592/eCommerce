@@ -28,7 +28,7 @@ class ChoiceCategory(models.Model):
 
 
 class Choices(models.Model):
-    choices_name = models.ForeignKey(ChoiceCategory, on_delete=models.CASCADE)
+    choices_name = models.ForeignKey(ChoiceCategory, on_delete=models.CASCADE, verbose_name='Имя подкатегории')
     name = models.CharField(max_length=150, verbose_name='Имя типа товара цвет/вкус')
     icon = models.ImageField(upload_to='choices/', verbose_name='Главное изображение разновидности товара')
     in_stock = models.BooleanField(default=True, verbose_name='В наличии')
@@ -92,9 +92,11 @@ class Icon(models.Model):
 class Item(models.Model):
     name = models.CharField(max_length=155, verbose_name='Название товара')
     choice = models.ManyToManyField(Choices, blank=True, null=True,
-                                    verbose_name='Название подкатегории')
+                                    verbose_name='Название подкатегории',
+                                    related_name="item_as_choice")
     all_icon = models.ManyToManyField(Icon, blank=True, null=True,
-                                      verbose_name='Все изображения товара')
+                                      verbose_name='Все изображения товара',
+                                      related_name="item_as_all_icon")
     info_item = models.ForeignKey(ItemInfo,
                                   verbose_name='Основная информация о товаре',
                                   on_delete=models.CASCADE)
@@ -105,10 +107,11 @@ class Item(models.Model):
                                  verbose_name='Категория товара',
                                  on_delete=models.CASCADE)
     is_published = models.BooleanField(default=False, verbose_name='Опбуликовано')
-    date = models.DateTimeField(auto_now=True, verbose_name='Дата публикации')
+    created_at = models.DateTimeField(auto_now=True, verbose_name='Дата публикации')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец поста')
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-created_at']
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 
@@ -117,7 +120,7 @@ class Item(models.Model):
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=155, null=True, blank=True, verbose_name='Имя пользователя')
     bio = models.TextField(max_length=1000, null=True, blank=True, verbose_name='Описание')
     profile_pic = models.ImageField(null=True, blank=True,
@@ -131,10 +134,12 @@ class Profile(models.Model):
                                 verbose_name='Ссылка телеграм')
     favourites = models.ManyToManyField(Item, verbose_name='Избранное',
                                         blank=True,
-                                        null=True)
+                                        null=True,
+                                        related_name="profile_as_favourites")
     order = models.ManyToManyField(Order, verbose_name='Заказ',
                                    blank=True,
-                                   null=True, )
+                                   null=True,
+                                   related_name="profile_as_order")
 
     class Meta:
         ordering = ['id']

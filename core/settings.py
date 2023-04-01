@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -135,6 +137,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://127.0.0.1/",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8000',
+]
